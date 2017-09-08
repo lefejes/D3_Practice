@@ -3,6 +3,10 @@ const h = window.innerHeight;
 
 const color = d3.scaleOrdinal(d3.schemeCategory20c);
 
+const bounds = (max) => (pos, r) => Math.max(r, Math.min(max - r, pos));
+const boundsX = bounds(w);
+const boundsY = bounds(h);
+
 const svg = d3.select('body').append('svg')
 	.attr('width', w)
 	.attr('height', h);
@@ -12,8 +16,8 @@ const simulation = d3.forceSimulation()
 	.force('charge', d3.forceManyBody())
 	.on('tick', () => {
 		svg.selectAll('circle')
-			.attr('cx', (d) => d.x)
-			.attr('cy', (d) => d.y);
+			.attr('cx', (d) => d.x = boundsX(d.x, d.r + 100))
+			.attr('cy', (d) => d.y = boundsY(d.y, d.r + 100));
 	});
 
 svg.on('mousemove', function() {
@@ -21,7 +25,6 @@ svg.on('mousemove', function() {
   const node = {
     x: point[0],
     y: point [1],
-    vx: 100,
     r: d3.randomUniform(2, 20)()
   };
 
